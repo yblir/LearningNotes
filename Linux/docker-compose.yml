@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+    lyb-cent7-cuda11_torch19:
+        image: lyb-cent7-cuda11-torch19:0324
+        container_name: "lyb-cent7-cuda11_torch19"
+        # 获取宿主机root权限,要映射端口也需要true,与先的/sbin/init同时需要
+        privileged: true
+        # 设置共享内存大小为16g,防止分布式训练dataloader时出错
+        shm_size: "16gb"
+
+        volumes:
+            - /home/data/liyabin_project:/home
+        ports:
+            - "10086:22"        # 容器内22端口映射到外部10086,用于链接pycharm
+            - "10087:10087"     # 用途待定,比如可以tensorboard --logdir=路径 --port 10087  
+        
+        # 关于gpu的配置,在容器内使用gpu
+        # environment:    # 设置关于显卡的环境变量
+        #     #- NVIDIAER_CAPABILITIES=compute,utility 
+        #     - "NVIDIA_VISIBLE_DEVICES=all"
+        
+        #deploy:     # gpu的依赖
+        #    resources:
+        #        reservations:
+        #            devices:
+        #                - driver: "nvidia"
+        #                  count: "all"
+        #                  capabilities: ["gpu"]
+        
+        # 启动容器之后可以使用systemctl方法,只在centos生效?
+        # entrypoint: /usr/sbin/init
+        restart: always
+        command: ["/bin/bash", "-c", "sleep infinity"]
+        network_mode:
+            "bridge"    # 桥接模式,容器之间不须要互相通讯
+            #"host"    # 容器环境不隔离，将使用主机的端口和ip, 此时ports端口映射失效
+        
+# /etc/docker/daemon.json中默认设置的不是nvidia,所以直接启动docker-compose,容器内是找不到nvidia-smi的
+# {
+#     "default-runtime": "nvidia",  # 要加上这句才行
+#     "runtimes": {
+#         "nvidia": {
+#             "path": "nvidia-container-runtime",
+#             "runtimeArgs": []
+#         }
+#     },
+#     "registry-mirrors": ["https://registry.docker-cn.com"]
+# }
+
+# 只能使用nvidia-docker启动了
+
+nvidia-docker run \
+    --name lyb-py38-cuda11_torch19 \
+    -p 10086:22 -p 10087:10087 \
+    --privileged=true \
+    --shm-size 8g \
+    -v /home/data/liyabin_project:/home \
+    --restart=always \
+    -d \
+    -it lyb-cent7-cuda11-torch19:0324 \
+    /usr/sbin/init \
+    sh -c "sleep infinity" 
