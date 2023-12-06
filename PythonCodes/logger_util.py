@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# @File: logger_test.py
+# @File: logger_util.py
 # @Author: yblir
 # @Time: 2022/12/11 下午 21:53
 # @Explain: 设置logger日志输出格式
-# ===========================================
+# ======================================================================================================================
 import os
 import sys
 
@@ -29,7 +29,7 @@ class MyLogger:
         # 分别为颜色>时间,日志等级,模块名 函数名 行号, 日志内容
         log_format = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> <red>|</red> " \
                      "<level>{level:<8}</level><red>|</red> " \
-                     "<cyan>{module}.py</cyan> <cyan>{function}</cyan>" \
+                     "<cyan>{module}.py</cyan>" \
                      ":<cyan>{line}</cyan> - " \
                      "<level>{message}</level>"
 
