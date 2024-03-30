@@ -4,19 +4,21 @@
 # @File    : 13. xml2yolov5风格的标签.py
 # explain  : 
 # =======================================================
+import shutil
 import xml.etree.ElementTree as ET
-import pickle
+
+# import pickle
 import os
 from os import listdir, getcwd
-from os.path import join
+# from os.path import join
+import glob
 
-sets = ['train', 'test', ]
-classes = ["fire", "smoke"]  # 这里输入你的数据集类别
+classes = ["person", "helmet"]
 
 
-def convert(size, box):  # 读取xml文件中的数据，xywh
-    dw = 1. / size[0]
-    dh = 1. / size[1]
+def convert(size, box):
+    dw = 1.0 / size[0]
+    dh = 1.0 / size[1]
     x = (box[0] + box[1]) / 2.0
     y = (box[2] + box[3]) / 2.0
     w = box[1] - box[0]
@@ -28,19 +30,21 @@ def convert(size, box):  # 读取xml文件中的数据，xywh
     return x, y, w, h
 
 
-def convert_annotation(image_id):
-    in_file = open('Annotations/%s.xml' % (image_id), encoding='utf-8')  # 这里是读取xml的文件夹
-    out_file = open('Annotations/%s.txt' % (image_id), 'w', encoding='utf-8')  # 存入txt文件的文件夹
-    tree = ET.parse(in_file)
-    root = tree.getroot()
+def convert_annotation(image_name):
+    # in_file = open(image_name[:-3] + 'xml')  # xml文件路径
+    out_file = open('./work/lables/train_v/' + image_name[:-3] + 'txt', 'w')  # 转换后的txt文件存放路径
+    with open('./work/' + image_name[:-3] + 'xml', "r") as f:
+        xml_text = f.read()
+        root = ET.fromstring(xml_text)
+        f.close()
     size = root.find('size')
     w = int(size.find('width').text)
     h = int(size.find('height').text)
 
     for obj in root.iter('object'):
-        difficult = obj.find('difficult').text
         cls = obj.find('name').text
-        if cls not in classes or int(difficult) == 1:
+        if cls not in classes:
+            print(cls)
             continue
         cls_id = classes.index(cls)
         xmlbox = obj.find('bndbox')
@@ -52,13 +56,11 @@ def convert_annotation(image_id):
 
 wd = getcwd()
 
-for image_set in sets:
-    # if not os.path.exists('labels/'):
-    #     os.makedirs('labels/')
-    image_ids = open('ImageSets/Main/%s.txt' % (
-        image_set)).read().strip().split()  # 读取train.txt或者test.txt从而找到每个xml文件的文件名，这里的train.txt中仅包含文件名，不包好路径。
-    # list_file = open('%s.txt'%(image_set), 'w')
-    for image_id in image_ids:
-        # list_file.write('/root/object-detection/yolov5-master/data/police_obj/images/%s.jpg\n'%(image_id))#从写train.txt或者test.txt文件，把图片文件的绝对路径写入，方便读取图片
-        convert_annotation(image_id)
-    # list_file.close()
+if __name__ == '__main__':
+    os.makedirs('./work/lables/train_v', exist_ok=True)
+    os.makedirs("./work/images/train_v", exist_ok=True)
+
+    for image_path in glob.glob("./work/*.jpg"):  # 每一张图片都对应一个xml文件这里写xml对应的图片的路径
+        shutil.copy(image_path, "./work/images/train_v")
+        image_name = image_path.split(os.sep)[-1]
+        convert_annotation(image_name)
