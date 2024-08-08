@@ -38,7 +38,7 @@ def process_text():
 
 
 def save_num_to_excel():
-    save_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
+    save_path = filedialog.asksaveasfilename(defaultextension=".xls", filetypes=[("Excel Files", "*.xls")])
     work_book = xlwt.Workbook(encoding='utf-8')
     sheet = work_book.add_sheet('号码簿')
     right_content = right_text.get('1.0', tk.END)
