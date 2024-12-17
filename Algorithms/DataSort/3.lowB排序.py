@@ -24,13 +24,19 @@ def select_sort(nums):
 
 # 插入排序
 def insert_sort(nums):
-    pass
+    for i in range(1, len(nums)):  # i表示摸到的牌下标
+        temp = nums[i]
+        j = i - 1  # j表示手里牌的下标
+        while j >= 0 and nums[j] >= temp:
+            nums[j + 1] = nums[j]
+            j -= 1
+        nums[j + 1] = temp
 
 
 if __name__ == '__main__':
     a = [2, 1, 5, 4, 3, 9, 7, 4, 0, 8]
     print(a)
     # bubble_sort(a)
-    select_sort(a)
+    # select_sort(a)
+    insert_sort(a)
     print(a)
-    en
