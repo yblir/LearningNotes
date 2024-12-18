@@ -25,13 +25,13 @@
 
 
 def sift(li, low, high):
-    '''
+    """
     Args:
         li: list
         low: 堆的根节点位置
         high: 堆的最后一个元素位置
     Returns:
-    '''
+    """
     i = low  # 堆顶，指向根节点
     j = 2 * i + 1  # i的左节点
     temp = li[low]  # 把堆顶元素存储起来
@@ -48,3 +48,10 @@ def sift(li, low, high):
             break
     else:
         li[i] = temp    # 当while条件不满足时，走完while会进入else，此时要把拿出来的堆顶元素放到空位上
+
+def heap_sort(li):
+    n=len(li)
+    # 从最后一个叶子节点序号len(li)-1开始倒叙遍历
+    # 这个最后叶子节点的父节点是len(li)-1-1)//2
+    for i in range((len(li)-1-1)//2,-1,-1):
+        # i表示当前调整部分的根节点
