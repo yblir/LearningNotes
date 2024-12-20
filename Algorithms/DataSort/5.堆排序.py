@@ -4,6 +4,8 @@
 # @File    : 5.堆排序.py
 # explain  : 
 # =======================================================
+import random
+
 # 二叉树： 度不超过2的树
 # 满二叉树：一个二叉树，每层节点数达到最大
 # 完全二叉树：叶子节点只出现在最下层和次下层，在完全二叉树中，除了最底层节点可能没填满外，
@@ -47,11 +49,26 @@ def sift(li, low, high):
             li[i] = temp  # 把temp放到某个子节点空位上
             break
     else:
-        li[i] = temp    # 当while条件不满足时，走完while会进入else，此时要把拿出来的堆顶元素放到空位上
+        li[i] = temp  # 当while条件不满足时，走完while会进入else，此时要把拿出来的堆顶元素放到空位上
 
+# 时间复杂度 nlogn
 def heap_sort(li):
-    n=len(li)
+    n = len(li)
     # 从最后一个叶子节点序号len(li)-1开始倒叙遍历
-    # 这个最后叶子节点的父节点是len(li)-1-1)//2
-    for i in range((len(li)-1-1)//2,-1,-1):
+    # 这个最后叶子节点的父节点是len(li)-1-1)//2，整除，所以不管左右节点都适用
+    for i in range((len(li) - 1 - 1) // 2, -1, -1):
         # i表示当前调整部分的根节点
+        sift(li, i, n - 1)  # 建堆完成
+    for i in range(n - 1, -1, -1):
+        # i 指向当前堆的最后一个元素, 让堆顶元素与堆最后一个元素交换
+        li[0], li[i] = li[i], li[0]
+        # i-1是新的high
+        sift(li, 0, i - 1)
+
+
+if __name__ == '__main__':
+    li = [i for i in range(20)]
+    random.shuffle(li)
+    print(li)
+    heap_sort(li)
+    print(li)
